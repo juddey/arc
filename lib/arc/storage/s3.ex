@@ -81,7 +81,7 @@ defmodule Arc.Storage.S3 do
     config = ExAws.Config.new(:s3, Application.get_all_env(:ex_aws))
     s3_key = s3_key(definition, version, file_and_scope)
     s3_bucket = s3_bucket(definition)
-    {:ok, url} = ExAws.S3.presigned_url(config, :get, s3_bucket, s3_key, options)
+    {:ok, url} = ExAws.Auth.presigned_url(config, :get, s3_bucket, s3_key, options)
     url
   end
 

@@ -81,7 +81,25 @@ defmodule Arc.Storage.S3 do
     config = ExAws.Config.new(:s3, Application.get_all_env(:ex_aws))
     s3_key = s3_key(definition, version, file_and_scope)
     s3_bucket = s3_bucket(definition)
-    {:ok, url} = ExAws.Auth.presigned_url(config, :get, s3_bucket, s3_key, options)
+#   config = %{
+#      access_key_id: "Haha You thought this was an access key",
+#      host: "s3-ap-southeast-2.amazonaws.com",
+#      http_client: ExAws.Request.Hackney,
+#      included_applications: nil,
+#      json_codec: Poison,
+#      port: 443,
+#      region: "ap-southeast-2",
+#      retries: [max_attempts: 10, base_backoff_in_ms: 10, max_backoff_in_ms: 10000],
+#      s3: {:scheme, "https://"},
+#      scheme: "https://",
+#      secret_access_key: "Haha You thought this was a secret access key"
+#    }
+#    s3_bucket = "some-bucket-some-where"
+#    s3_key = "uploads/avatars/7fc9561c-07ce-4a12-bc57-cb5848ec8871/thumb.png"
+#    options = [virtual_host: true, signed: true, expires_in: 604800]
+#
+    new_url = Enum.join(["https://", s3_bucket, '.', get_in(config, [:host]), '/', s3_key])
+    {:ok, url} = ExAws.Auth.presigned_url(:get, new_url, :s3, NaiveDateTime.utc_now() |> NaiveDateTime.to_erl, config, 604800)
     url
   end
 
